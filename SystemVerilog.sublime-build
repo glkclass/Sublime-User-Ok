@@ -1,0 +1,52 @@
+{
+    "file_regex": "(?:xrun|xmvlog|xmelab|halcheck|halstruct|halsynth|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|(?:\\d*)\\): (.*)",
+    "selector": "source.systemverilog",
+    "working_dir": "$file_path",
+    "syntax": "Packages/User/Colored_build_output.sublime-syntax",
+    "shell_cmd": "echo 'Define build system, file regex, colored build output'",
+    "env":{
+    },
+
+    "variants":
+        [
+            {
+                "name": "Vivado",
+                "file_regex": "(?:ERROR|WARNING): \\[(?:[^\\]]+)\\] (?:[^\\[]+) \\[(.+):(\\d+)\\]",
+                "working_dir": "$HOME/tmp",
+                "shell_cmd": "source /tools/Xilinx/Vivado/2023.2/settings64.sh; xvlog -sv $file; "
+            },
+
+            {
+                "name": "Msim",
+                "file_regex": "^[ ]*\\*\\* Error\\:+ [\\(.*\\)\\:]+ (...*?)\\(([0-9]*)\\)\\: .*$",
+                "working_dir": "$file_path",
+                "shell_cmd": "vlib work & vlog $file"
+            },
+
+            // {
+            //     "name": "CSI: Simulate on nesx",
+            //     "file_regex": "(?:xrun|xmvlog|xmelab|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)",
+            //     "shell_cmd": "rsync -av -e ssh --exclude={'xcelium.d','log','.git','*.log','xrun.history','LICENSE','README.md'} \\$CSI_PATH/* nesx:\\$CSI_PATH ; ssh nesx 'cd /home/anton/design/csi/util/scrpt ; source csi_run.sh sim' ; rsync -av -e ssh nesx:\\$CSI_PATH/util/art/sim \\$CSI_PATH/util/art",
+            // },
+            // {
+            //     "name": "CSI: Clean on nesx",
+            //     "file_regex": "(?:xrun|xmvlog|xmelab|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)",
+            //     "shell_cmd": "ssh nesx 'cd /home/anton/design/csi/run/sim ; xrun -clean'",
+            // },
+            {
+                "name": "Compile",
+                "working_dir": "$file_path",
+                "shell_cmd": "bash --login  -c 'xrun -compile $file_name ; rm xrun.log xrun.history ; rm -rf xcelium.d'",
+            },
+            // {
+            //     "name": "Hal",
+            //     "working_dir": "/home/anton/design/ESCORT65/digital/design/tb/tmpsim",
+            //     "shell_cmd": "xrun -hal -messages -rulefile ../config/hal_rules.def -log_hal ../log/$file_name.hal.log $file",
+            // },
+            // {
+            //     "name": "Compile_SystemVerilog_as_Verilog",
+            //     "shell_cmd": "xrun -compile -vlog_ext .sv $file",
+            // },
+        ]
+
+}

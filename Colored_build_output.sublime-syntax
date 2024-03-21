@@ -1,0 +1,212 @@
+%YAML 1.2
+---
+name: Colored build output
+version: 1
+
+scope: source.build_output
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  # prototype:
+
+  main:
+    # Cadence Xcelium output
+    - match: "file:\\s(.*)"
+      captures:
+        1: build_output.bold
+
+    - match: "module\\s\\w+\\s\\(.*"
+      scope: build_output.bold
+
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halstruct|halsynth|xmsim): \\*[E],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)"
+      scope: message.error
+      captures:
+        1: message.error.detail
+        4: message.error.detail
+
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halstruct|halsynth|xmsim): \\*[W],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)"
+      scope: message.warning
+      captures:
+        1: message.warning.detail
+        4: message.warning.detail
+
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halstruct|halsynth|xmsim): \\*[N],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)"
+      scope: message.note
+      captures:
+        1: message.note.location
+        2: message.note.location
+        3: message.note.location
+
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[F],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)"
+      scope: message.error.fatal
+
+    # Cadence Xcelium output wo file/line/pos
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[E],[A-Z0-9]+:\\s.*"
+      scope: message.error
+
+    - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[W],[A-Z0-9]+:\\s.*"
+      scope: message.warning
+
+    # Cadence Xcelium UVM output
+    - match: "file:\\s(.*)"
+      captures:
+        1: build_output.bold
+
+    - match: "module\\s\\w+\\s\\(.*"
+      scope: build_output.bold
+
+    - match: "(?:UVM_ERROR)\\s+(.*)\\((\\d+)\\)\\s+@ (\\d+\\.\\d+ns) (.*)"
+      scope: message.error
+      captures:
+        1: message.error.detail
+        2: message.error.detail
+        3: message.error.detail
+
+    - match: "(UVM_ERROR) :\\s+\\d+"
+      scope: message.error
+
+    - match: "(?:UVM_WARNING)\\s+(.*)\\((\\d+)\\)\\s+@ (\\d+\\.\\d+ns) (.*)"
+      scope: message.warning
+      captures:
+        1: message.warning.detail
+        2: message.warning.detail
+        3: message.warning.detail
+
+    - match: "(?:UVM_WARNING) @ (\\d+\\.\\d+ns): (.*)"
+      scope: message.warning
+      captures:
+        1: message.warning.detail
+
+    - match: "(UVM_WARNING) :\\s+\\d+"
+      scope: message.warning
+
+    - match: "(UVM_INFO)\\s+(.*)\\((\\d+)\\)\\s+@ (\\d+\\.\\d+ns)\\s+(.*)"
+      scope: message.note
+      captures:
+        2: message.note.location
+        3: message.note.location
+
+    - match: "(UVM_INFO) @ (\\d+ps): (.*)"
+      scope: message.note
+      captures:
+        2: message.note.location
+
+    - match: "(UVM_INFO) :\\s+\\d+"
+      scope: message.note
+
+    - match: "(UVM_FATAL).+"
+      scope: message.error.fatal
+
+    # Xilinx Vivado output
+    - match: "(ERROR): \\[([^\\]]+)\\] ([^\\[]+) \\[(.+):(\\d+)\\]"
+      scope: message.error
+      captures:
+        1: message.error.detail
+        2: message.error.detail
+        4: message.error.location
+        5: message.error.location
+
+    - match: "(ERROR): \\[([^\\]]+)\\].*"
+      scope: message.error
+      captures:
+        1: message.error.detail
+        2: message.error.detail
+
+    - match: "(ERROR): .*"
+      scope: message.error
+      captures:
+        1: message.error.detail
+
+    
+    - match: "(WARNING): \\[([^\\]]+)\\] ([^\\[]+) \\[(.+):(\\d+)\\]"
+      scope: message.warning
+      captures:
+        1: message.warning.detail
+        2: message.warning.detail
+        4: message.warning.location
+        5: message.warning.location
+
+    - match: "(INFO): \\[([^\\]]+)\\] (.*)"
+      scope: message.note
+      captures:
+        1: message.note.detail
+        2: message.note.detail
+ 
+
+    #Python output
+    - match: "([A-Z]\\w*Error):*(.*)"
+      captures:
+        1: message.error
+        2: message.error.detail
+
+    - match: "File\\s\"(.*)\",\\sline\\s\\d+,\\sin\\s(.*)"
+      captures:
+        1: message.error
+        2: message.error.detail
+
+    - match: "File\\s\"(.*)\",\\sline\\s\\d+"
+      captures:
+        1: message.error
+
+    - match: "(.*):(\\d+):\\s(RuntimeWarning|DeprecationWarning):\\s(.*)"
+      captures:
+        1: message.warning.detail
+        2: message.warning.detail
+        3: message.warning
+        4: message.warning.detail
+
+    #Python/CocoTB output
+    - match: ".*\\sINFO\\s.*Status=Error.*"
+      scope: message.error
+
+    - match: ".*\\sINFO\\s.*(Status=Ok).*"
+      scope: message.note
+      captures:
+        1: message.note.detail
+
+    - match: ".*\\sINFO\\s.*"
+      scope: message.note
+
+    - match: ".*\\sWARNING\\s.*"
+      scope: message.warning
+
+    - match: ".*\\sERROR\\s.*"
+      scope: message.error
+
+    #[LOG] output
+    - match: "\\[Finished\\s.*"
+      scope: build_output.bold
+
+    - match: "errors:\\s0"
+      scope: build_output.bold
+
+    - match: "errors:\\s[1-9]\\d*"
+      scope: message.error
+
+    - match: "warnings:\\s0"
+      scope: build_output.bold
+
+    - match: "warnings:\\s[1-9]\\d*"
+      scope: message.warning
+
+    - match: "={12}(Result)*={12}=*"
+      scope: build_output.bold
+
+    - match: "\\sPASS(\\s|=\\d+)"
+      scope: message.note
+
+    - match: "\\sFAIL(\\s|=[1..9]\\d*)"
+      scope: message.error
+
+    - match: "\\[LOG\\]\\s+Success.*"
+      scope: message.note
+
+    - match: "\\[LOG\\]\\s+Fail.*"
+      scope: message.error
+
+    - match: "\\[LOG\\]\\s+Error.*"
+      scope: message.error
+
+    - match: "\\[LOG\\]\\s.*"
+      scope: build_output.bold
