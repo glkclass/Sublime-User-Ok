@@ -1,28 +1,52 @@
 {
     "file_regex": "(?:xrun|xmvlog|xmelab|halcheck|halstruct|halsynth|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|(?:\\d*)\\): (.*)",
     "selector": "source.systemverilog",
-    "working_dir": "$file_path",
+    "working_dir": "/tmp",
     "syntax": "Packages/User/Colored_build_output.sublime-syntax",
     "shell_cmd": "echo 'Define build system, file regex, colored build output'",
-    "env":{
-    },
+    "env":{},
 
     "variants":
         [
+
+
+            // Vivado
             {
-                "name": "Vivado",
+                "name": "compile",
                 "file_regex": "(?:ERROR|WARNING): \\[(?:[^\\]]+)\\] (?:[^\\[]+) \\[(.+):(\\d+)\\]",
-                "working_dir": "$HOME/tmp",
-                "shell_cmd": "source /tools/Xilinx/Vivado/2023.2/settings64.sh; xvlog -sv $file; "
+                "shell_cmd": "echo Vivado toolchain: compile $file ; source /tools/Xilinx/Vivado/2023.2/settings64.sh ; xvlog -f /home/anton.voloshchuk/design/dutb/util/util_file_opt.list ; xvlog -sv $file  ",
             },
-
             {
-                "name": "Msim",
-                "file_regex": "^[ ]*\\*\\* Error\\:+ [\\(.*\\)\\:]+ (...*?)\\(([0-9]*)\\)\\: .*$",
-                "working_dir": "$file_path",
-                "shell_cmd": "vlib work & vlog $file"
+                "name": "build",
+                "file_regex": "(?:ERROR|WARNING): \\[(?:[^\\]]+)\\] (?:[^\\[]+) \\[(.+):(\\d+)\\]",
+                "shell_cmd": "echo Vivado toolchain: elaborate ; source ../scripts/build.sh",
             },
+            {
+                "name": "run",
+                "shell_cmd": "echo Vivado toolchain: simulate ; source /tools/Xilinx/Vivado/2023.2/settings64.sh ; xsim top -R  ",
+            },
+            {
+                "name": "build&run",
+                "shell_cmd": "echo Vivado toolchain: elaborate & simulate ; source ../scripts/build.sh ; xsim top -R  ",
+            },
+            // 
 
+
+            // Modelsim
+            {
+                "name": "compile",
+                "file_regex": "^[ ]*\\*\\* Error\\:+ [\\(.*\\)\\:]+ (...*?)\\(([0-9]*)\\)\\: .*$",
+                "shell_cmd": "echo Modelsim toolchain: source compile ; vlib work & vlog $file"
+            },
+            // 
+
+
+            // Cadence on WSL
+            {
+                "name": "Cadence",
+                "working_dir": "$file_path",
+                "shell_cmd": "echo Cadence toolchain: source compile ; bash --login  -c 'xrun -compile $file_name ; rm xrun.log xrun.history ; rm -rf xcelium.d'",
+            },
             // {
             //     "name": "CSI: Simulate on nesx",
             //     "file_regex": "(?:xrun|xmvlog|xmelab|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)",
@@ -33,11 +57,6 @@
             //     "file_regex": "(?:xrun|xmvlog|xmelab|xmsim): \\*[FEWN],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)",
             //     "shell_cmd": "ssh nesx 'cd /home/anton/design/csi/run/sim ; xrun -clean'",
             // },
-            {
-                "name": "Compile",
-                "working_dir": "$file_path",
-                "shell_cmd": "bash --login  -c 'xrun -compile $file_name ; rm xrun.log xrun.history ; rm -rf xcelium.d'",
-            },
             // {
             //     "name": "Hal",
             //     "working_dir": "/home/anton/design/ESCORT65/digital/design/tb/tmpsim",

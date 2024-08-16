@@ -74,35 +74,31 @@
         {
             "name": "Error detail",
             "scope": "message.error.detail",
-            "foreground": "var(red)",
             "font_style": "bold",
         },
 
         {
             "name": "Error location",
             "scope": "message.error.location",
-            "foreground": "var(red)",
             "font_style": "italic",
         },
 
+        // Warning
         {
             "name": "Warning",
             "scope": "message.warning",
             "foreground": "var(orange)",
         },
 
-        // Warning
         {
             "name": "Warning detail",
             "scope": "message.warning.detail",
-            "foreground": "var(orange)",
             "font_style": "bold",
         },
 
         {
             "name": "Warning location",
             "scope": "message.warning.location",
-            "foreground": "var(orange)",
             "font_style": "italic",
         },
 

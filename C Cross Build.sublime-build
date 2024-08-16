@@ -1,0 +1,22 @@
+{
+    "file_regex": "",
+    "selector": "source.c",
+    "working_dir": "/home/anton.voloshchuk/design/riscv-firmware-oko/i2c/Debug",
+    "syntax": "Packages/User/Colored_build_output.sublime-syntax",
+    "shell_cmd": "echo Define build system, file regex, colored build output",
+    "env":{},
+
+    "variants":
+        [
+            // Vitis
+            {
+                "name": "compile",
+                "shell_cmd": "echo Vitis toolchain: compile $file; source /tools/Xilinx/Vitis/2023.2/settings64.sh ; mb-gcc -Wall -O2 -c -I../src/inc -I/home/anton.voloshchuk/design/riscv-firmware-oko/top/export/top/sw/top/standalone_domain/bspinclude/include $file"
+            },
+            {
+                "name": "build",
+                "shell_cmd": "echo Vitis toolchain: make ; source /tools/Xilinx/Vitis/2023.2/settings64.sh ; make all"
+            }
+            // 
+        ]
+}

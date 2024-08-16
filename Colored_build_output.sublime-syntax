@@ -11,7 +11,67 @@ contexts:
   # prototype:
 
   main:
-    # Cadence Xcelium output
+
+  # Sublime build output
+    - match: "^((?:Vitis|Vivado) toolchain): (compile|build|make|elaborate|simulate|elaborate and simulate) in (.*)"
+      captures:
+        1: build_output.bold
+        2: build_output.bold
+        4: build_output.bold
+
+    - match: "^\\[(shell_cmd|dir|path|Finished).*\\]"
+      captures:
+        1: build_output.bold
+
+  # make output
+    - match: "^(Building) (file|target): (.*)"
+      captures:
+        1: build_output.bold
+        3: build_output.bold
+
+    - match: "^(Invoking)(.*)"
+      captures:
+        1: build_output.bold
+
+    - match: "^(Finished)(.*):(.*)"
+      captures:
+        1: build_output.bold
+        3: build_output.bold
+
+  # linker output
+    - match: "^.*(error: ld).*$"
+      scope: message.error
+
+    - match: "^.*(: failed).*$"
+      scope: message.error
+
+    - match: "^.*(: multiple definition).*$"
+      scope: message.error
+
+    - match: "^.*(: undefined reference).*$"
+      scope: message.error
+
+  # gcc output
+    - match: "^(.*):([0-9]+):([0-9]*):* (error): (.*)$"
+      scope: message.error
+      captures:
+        4: message.error.detail
+
+    - match: "^(.*):([0-9]+):([0-9]*):* (fatal error): (.*)$"
+      scope: message.error.fatal
+      captures:
+
+    - match: "^(.*):([0-9]+):([0-9]*):* (warning): (.*)$"
+      scope: message.warning
+      captures:
+        4: message.warning.detail
+
+    - match: "^(.*):([0-9]+):([0-9]*):* (note): (.*)$"
+      scope: message.note
+      captures:
+        4: message.note.detail
+
+  # Cadence Xcelium output
     - match: "file:\\s(.*)"
       captures:
         1: build_output.bold
@@ -41,14 +101,14 @@ contexts:
     - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[F],[A-Z0-9]+ \\((.*),(\\d+)\\|*(\\d*)\\): (.*)"
       scope: message.error.fatal
 
-    # Cadence Xcelium output wo file/line/pos
+  # Cadence Xcelium output wo file/line/pos
     - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[E],[A-Z0-9]+:\\s.*"
       scope: message.error
 
     - match: "(?:xrun|xmvlog|xmvlog_cg|xmelab|halcheck|halsynth|xmsim): \\*[W],[A-Z0-9]+:\\s.*"
       scope: message.warning
 
-    # Cadence Xcelium UVM output
+  # Cadence Xcelium UVM output
     - match: "file:\\s(.*)"
       captures:
         1: build_output.bold
@@ -98,7 +158,7 @@ contexts:
     - match: "(UVM_FATAL).+"
       scope: message.error.fatal
 
-    # Xilinx Vivado output
+  # Xilinx xvlog (Vivado) output
     - match: "(ERROR): \\[([^\\]]+)\\] ([^\\[]+) \\[(.+):(\\d+)\\]"
       scope: message.error
       captures:
@@ -113,7 +173,7 @@ contexts:
         1: message.error.detail
         2: message.error.detail
 
-    - match: "(ERROR): .*"
+    - match: "(ERROR|Error): .*"
       scope: message.error
       captures:
         1: message.error.detail
@@ -127,19 +187,28 @@ contexts:
         4: message.warning.location
         5: message.warning.location
 
+    - match: "(\\[WARNING\\]) (.*)"
+      scope: message.warning
+      captures:
+        1: message.warning.detail
+        
+    - match: "(\\[(?:FATAL|ERROR)\\]) (.*)"
+      scope: message.error
+      captures:
+        1: message.error.detail
+
     - match: "(INFO): \\[([^\\]]+)\\] (.*)"
       scope: message.note
       captures:
         1: message.note.detail
         2: message.note.detail
  
-
-    #Python output
-    - match: "([A-Z]\\w*Error):*(.*)"
+    - match: "(\\[INFO\\]) (.*)"
+      scope: message.note
       captures:
-        1: message.error
-        2: message.error.detail
-
+        1: message.note.detail
+        
+  #Python output
     - match: "File\\s\"(.*)\",\\sline\\s\\d+,\\sin\\s(.*)"
       captures:
         1: message.error
@@ -156,7 +225,7 @@ contexts:
         3: message.warning
         4: message.warning.detail
 
-    #Python/CocoTB output
+  #Python/CocoTB output
     - match: ".*\\sINFO\\s.*Status=Error.*"
       scope: message.error
 
@@ -174,10 +243,12 @@ contexts:
     - match: ".*\\sERROR\\s.*"
       scope: message.error
 
-    #[LOG] output
-    - match: "\\[Finished\\s.*"
-      scope: build_output.bold
+    - match: ".*\\s(CRITICAL)\\s.*"
+      scope: message.error
+      captures:
+        1: message.error.detail
 
+  #[LOG] output
     - match: "errors:\\s0"
       scope: build_output.bold
 

@@ -1,0 +1,7 @@
+<snippet>
+    <content><![CDATA[
+integer ${1} = ${2};
+]]></content>
+    <tabTrigger>integer</tabTrigger>
+    <scope>source.verilog</scope>
+</snippet>

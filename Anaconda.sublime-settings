@@ -1,1 +1,7 @@
-{"swallow_startup_errors": false}
+{
+	"swallow_startup_errors": false,
+	"python_interpreter": "python3",
+	"anaconda_linter_mark_style": "none",
+	"pep8_max_line_length": 160,
+    "auto_python_builder_enabled": false,
+}

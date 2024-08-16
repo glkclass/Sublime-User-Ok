@@ -4,20 +4,28 @@
     {
         "keys": ["ctrl+f7"],
         "command": "build",
-        "args": {"variant": "CSI: Clean"},
-        "context": [{"key": "selector", "operator": "equal", "operand": "source.systemverilog"}]
+        "args": {"variant": "build"},
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.c,source.systemverilog"}]
     },
+
+    {
+        "keys": ["shift+f7"],
+        "command": "build",
+        "args": {"variant": "clean"},
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.c,source.systemverilog"}]
+    },
+
     {
         "keys": ["f5"],
         "command": "build",
-        "args": {"variant": "CSI: Simulate on nesx"},
-        "context": [{"key": "selector", "operator": "equal", "operand": "source.systemverilog"}]
+        "args": {"variant": "run"},
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.systemverilog,source.python"}]
     },
 
     {
         "keys": ["ctrl+f5"],
         "command": "build",
-        "args": {"variant": "CSI: Clean on nesx"},
+        "args": {"variant": "build&run"},
         "context": [{"key": "selector", "operator": "equal", "operand": "source.systemverilog"}]
     },
 ]
